@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.contrib import messages
 from . import forms
 
 def login(request):
@@ -9,13 +8,18 @@ def logout(request):
     return render(request,'logout.html.jinja')
 
 def register(request):
-    if request.method == 'GET':
-        form = forms.RegistrationForm()
-        form_address = forms.UserAddressFormSet
-        return render(request,'register.html.jinja', {'form': form, 'form_address': form_address})
-    elif request.method == 'POST':
-        form = forms.RegistrationForm(request.POST)
-        messages.success(request, "Success")
-        return render(request,'register.html.jinja')
+    if request.method == 'POST':
+        form_user = forms.RegistrationForm(request.POST)
+        form_address = forms.UserAddressFormSet(request.POST)
+        if form_user.is_valid() and form_address.is_valid():
+            user = form_user.save()
+            addresses = form_address.save(commit=False)
+            for address in addresses:
+                address.user = user
+                address.save()
+            return render(request,'register.html.jinja', {'message': "Success!"})
+        return render(request,'register.html.jinja', {'message': "Coś nie poszło!"})
     else:
-        return render(request,'register.html.jinja')
+        form_user = forms.RegistrationForm()
+        form_address = forms.UserAddressFormSet()
+        return render(request,'register.html.jinja', {'form_user': form_user, 'form_address': form_address})
