@@ -1,0 +1,36 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+    <h2>Lista samochodów</h2>
+    <div class="container mb-3 mt-3"> 
+    {% for category in categories %}
+        <h3>{{category}}</h3>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for car in cars %}
+            {% if car.category == category %}
+            <div class="col">
+                <div class="card text-center">
+                    <div class="card-header">
+                        {{car.brand}} {{car.model}}
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Silnik <span class="badge text-bg-primary rounded-pill">{{car.engine_type}}</span></p>
+                        <p class="card-text">Liczba osób <span class="badge text-bg-primary rounded-pill">{{car.seats_count}}</span></p>
+                        <a href="#" class="btn btn-primary">Wypożycz</a>
+                    </div>
+                    <div class="card-footer text-body-secondary">
+                        2 days ago
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endfor %}
+    </div>
+    <div class="container mb-3 mt-3">
+        {{cars2 | safe}}
+    </div>
+{% endblock content %}
+{% block script %}
+    <script>let table = new DataTable('#cars2');</script>
+{% endblock script %}
