@@ -15,7 +15,7 @@
                     <div class="card-body">
                         <p class="card-text">Silnik <span class="badge text-bg-primary rounded-pill">{{car.engine_type}}</span></p>
                         <p class="card-text">Liczba osób <span class="badge text-bg-primary rounded-pill">{{car.seats_count}}</span></p>
-                        <a href="#" class="btn btn-primary">Wypożycz</a>
+                        <a href="{% url 'rent' car_id=car.id %}" class="btn btn-primary">Wypożycz</a>
                     </div>
                     <div class="card-footer text-body-secondary">
                         2 days ago
