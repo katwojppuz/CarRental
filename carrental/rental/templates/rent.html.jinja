@@ -11,3 +11,30 @@
     </form>
     {% endif %}
 {% endblock%}
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+            const pickupDateInput = document.getElementById('id_pickup_date');
+            const returnDateInput = document.getElementById('id_return_date');
+            const orderValueInput = document.getElementById('id_order_value');
+            const orderDurationInput = document.getElementById('id_declared_order_duration');
+            const dailyRate = {{price}}.toFixed(2);
+            
+            function calculateOrderValue() {
+                const pickupDate = new Date(pickupDateInput.value);
+                const returnDate = new Date(returnDateInput.value);
+                if (pickupDate && returnDate && returnDate > pickupDate) {
+                    const days = (returnDate - pickupDate) / (1000 * 60 * 60 * 24);
+                    orderDurationInput.value = days
+                    const orderValue = days * dailyRate;
+                    orderValueInput.value = orderValue.toFixed(2);
+                } else {
+                    orderValueInput.value = '';
+                    orderDurationInput.value = '';
+                }
+            }
+            pickupDateInput.addEventListener('change', calculateOrderValue);
+            returnDateInput.addEventListener('change', calculateOrderValue);
+        });
+</script>
+{% endblock script %}

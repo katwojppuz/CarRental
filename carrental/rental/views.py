@@ -1,7 +1,8 @@
 import pandas as pd
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from .models import Car, Order
+from .models import Car, Order, User
 from .forms import OrderForm
 
 def index(request):
@@ -16,6 +17,7 @@ def cars(request):
 def car(request, car_id):
     return render(request,'car.html.jinja')
 
+@login_required
 def rent(request, car_id):
     if request.method == 'POST':
         form_order = OrderForm(request.POST)
@@ -24,13 +26,15 @@ def rent(request, car_id):
             return redirect('confirm', order=order)
         return render(request,'rent.html.jinja', {'message': "Coś nie poszło!"})
     else:
+        current_user = User.objects.get(id=request.user.id)
         car = Car.objects.get(id=car_id)
         order = Order(
             car=car, 
             deposit=0.1*float(car.value),
         )
         form_order = OrderForm(instance=order)
-    return render(request,'rent.html.jinja', {'form_order': form_order, 'car_id': car_id})
+        print(car.price)
+    return render(request,'rent.html.jinja', {'form_order': form_order, 'car_id': car_id, 'price': str(car.price)})
 
 def confirm(request, order):
     return render(request,'confirm.html.jinja', {'order': order})

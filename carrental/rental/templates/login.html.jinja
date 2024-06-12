@@ -1,0 +1,12 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+    {% if message  %}
+        <p>{{message}}</p>
+    {% else %}
+    <form action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        {{form_user.as_p}}
+        <button type="submitt">Zaloguj</button>
+    </form>
+    {% endif %}
+{% endblock content %}

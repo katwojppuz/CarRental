@@ -1,5 +1,5 @@
-from django.forms import ModelForm, TextInput, Select, DateInput
-from django.contrib.auth.forms import UserCreationForm
+from django.forms import ModelForm, TextInput, Select, DateInput, CharField, PasswordInput, Form
+from django.contrib.auth.forms import UserCreationForm, UsernameField
 from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 from . import models
@@ -14,6 +14,17 @@ class RegistrationForm(UserCreationForm):
             'identity_document_type': _("Typ dokumentu tożsamości"),
             'identity_document_no': _("Numer dokumentu tożsamości"),
         }
+
+class LoginForm(Form):
+    username = UsernameField(widget=TextInput(
+        attrs={'class': 'form-control', 'placeholder': '', 'id': 'username'}))
+    password = CharField(widget=PasswordInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': '',
+            'id': 'password',
+        }
+    ))
 
 class AddressForm(ModelForm):
     class Meta:
@@ -41,12 +52,12 @@ UserAddressFormSet = inlineformset_factory(
 class OrderForm(ModelForm):
     class Meta:
         model = models.Order
-        exclude = ['id', 'order_value', 'payment_status', 'declared_order_duration']
+        exclude = ['id', 'payment_status']
         widgets = {
             'customer': TextInput(attrs={'class': 'mb-3 form-control', 'readonly': True}),
             'car': TextInput(attrs={'class': 'mb-3 form-control', 'readonly': True}),
-            'order_value': TextInput(attrs={'class': 'mb-3 form-control'}),
-            'declared_order_duration': TextInput(attrs={'class': 'mb-3 form-control'}),
+            'order_value': TextInput(attrs={'class': 'mb-3 form-control', 'readonly': True}),
+            'declared_order_duration': TextInput(attrs={'class': 'mb-3 form-control', 'readonly': True}),
             'pickup_date': DateInput(attrs={'class': 'mb-3 form-control', 'type': 'date'}),
             'return_date': DateInput(attrs={'class': 'mb-3 form-control', 'type': 'date'}),
             'deposit': TextInput(attrs={'class': 'mb-3 form-control', 'readonly': True}),

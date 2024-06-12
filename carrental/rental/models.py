@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.utils import timezone
+from django.forms import ValidationError
 
 class Equipment(models.Model):
     equipment = models.CharField(max_length=50)
@@ -81,4 +83,13 @@ class Order(models.Model):
     return_date = models.DateTimeField()
     deposit = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS)
-    payment_status = models.BooleanField()
+    payment_status = models.BooleanField(default=False)
+
+    def clean(self):
+        """
+        Walidacja dat odbioru i zwrotu zamówienia.
+        """
+        if self.pickup_date >= self.return_date:
+            raise ValidationError(_('Return date must be later than pickup date.'))
+        if self.pickup_date < timezone.now() or self.return_date < timezone.now():
+            raise ValidationError(_('Dates must be greater than today\'s date.'))

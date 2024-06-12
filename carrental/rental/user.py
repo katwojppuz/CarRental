@@ -1,8 +1,27 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
+from django.contrib.auth import authenticate, login as lgn
 from . import forms
 
 def login(request):
-    return render(request,'login.html.jinja')
+    if request.method == 'POST':
+        form_user = forms.LoginForm(request.POST)
+        print("1")
+        print(form_user.errors)
+        if form_user.is_valid():
+            print("2")
+            username = form_user.cleaned_data['username']
+            password = form_user.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                print("3")
+                lgn(request, user)
+        redirect_to = request.GET.get('next', '')
+        print(redirect_to)
+        return HttpResponseRedirect(redirect_to) 
+    else:
+        form_user = forms.LoginForm()    
+        return render(request,'login.html.jinja', {'form_user': form_user})
 
 def logout(request):
     return render(request,'logout.html.jinja')
